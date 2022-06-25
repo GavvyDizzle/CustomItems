@@ -1,6 +1,6 @@
 name: CustomItems
 version: '${project.version}'
-api-version: 1.12
+api-version: 1.18
 main: com.mittenmc.customitems.CustomItems
 depend: [RewardsInventory, ServerUtils]
 authors: [GavvyDizzle]

@@ -51,7 +51,7 @@ public class SaveItemCommand extends SubCommand {
         if (!(sender instanceof Player)) return;
 
         ItemStack itemStack = ((Player) sender).getInventory().getItemInMainHand();
-        if (itemStack == null || itemStack.getType() == Material.AIR) {
+        if (itemStack.getType() == Material.AIR) {
             sender.sendMessage(ChatColor.RED + "You are not holding a valid item");
             return;
         }
@@ -124,13 +124,15 @@ public class SaveItemCommand extends SubCommand {
         if (config.contains(path)) return false;
 
         XMaterial xMaterial = XMaterial.matchXMaterial(itemStack);
-        if (xMaterial.parseMaterial() == Material.SKULL_ITEM) {
+        if (xMaterial.parseMaterial() == Material.PLAYER_HEAD) {
+            assert itemStack.getItemMeta() != null;
             config.set(path + ".displayName", itemStack.getItemMeta().getDisplayName());
             config.set(path + ".lore", itemStack.getItemMeta().getLore());
             config.set(path + ".isSkull", true);
             config.set(path + ".skullLink", SkullUtils.getSkinValue(itemStack.getItemMeta()));
         }
         else {
+            assert itemStack.getItemMeta() != null;
             config.set(path + ".displayName", itemStack.getItemMeta().getDisplayName());
             assert xMaterial.parseMaterial() != null;
             config.set(path + ".material", xMaterial.parseMaterial().toString());

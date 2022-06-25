@@ -5,7 +5,6 @@ import com.cryptomorin.xseries.XMaterial;
 import com.github.mittenmc.serverutils.Colors;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.SkullType;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -38,7 +37,8 @@ public class CustomItemStack {
         }
 
         if (isUsingSkull) {
-            item = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
+            item = new ItemStack(Material.PLAYER_HEAD);
+            assert item.getItemMeta() != null;
             SkullMeta meta = SkullUtils.applySkin(item.getItemMeta(), skullString);
             meta.setDisplayName(name);
             meta.setLore(newLore);
@@ -49,6 +49,7 @@ public class CustomItemStack {
             item = xMaterial.parseItem();
             assert item != null;
             ItemMeta meta = item.getItemMeta();
+            assert meta != null;
             meta.setDisplayName(name);
             meta.setLore(newLore);
 
@@ -64,6 +65,7 @@ public class CustomItemStack {
         ArrayList<String> itemListLore = new ArrayList<>(newLore);
         itemListLore.add(ChatColor.DARK_GRAY + "----------------------");
         itemListLore.add(ChatColor.YELLOW + "id: " + ChatColor.GREEN + id);
+        assert meta != null;
         meta.setLore(itemListLore);
         itemListItem.setItemMeta(meta);
     }
