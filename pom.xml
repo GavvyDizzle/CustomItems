@@ -106,7 +106,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>me.GavvyDizzle</groupId>
+            <groupId>me.gavvydizzle</groupId>
             <artifactId>RewardsInventory</artifactId>
             <version>1.1.0</version>
             <scope>provided</scope>
