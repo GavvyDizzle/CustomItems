@@ -2,8 +2,8 @@ package com.mittenmc.customitems.commands.admincommands;
 
 import com.cryptomorin.xseries.SkullUtils;
 import com.cryptomorin.xseries.XMaterial;
+import com.github.mittenmc.serverutils.SubCommand;
 import com.mittenmc.customitems.CustomItems;
-import com.mittenmc.customitems.commands.SubCommand;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;

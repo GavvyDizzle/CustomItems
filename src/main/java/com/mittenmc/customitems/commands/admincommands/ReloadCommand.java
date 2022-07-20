@@ -1,7 +1,7 @@
 package com.mittenmc.customitems.commands.admincommands;
 
+import com.github.mittenmc.serverutils.SubCommand;
 import com.mittenmc.customitems.CustomItems;
-import com.mittenmc.customitems.commands.SubCommand;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -34,7 +34,7 @@ public class ReloadCommand extends SubCommand {
     @Override
     public void perform(CommandSender sender, String[] args) {
         CustomItems.getInstance().reloadConfig();
-        CustomItems.getInstance().getItemManager().reloadAllItems();
+        CustomItems.getInstance().getItemManager().reload();
         CustomItems.getInstance().getGUIManager().reloadAllGUIs();
         sender.sendMessage(ChatColor.GREEN + "[CustomItems] Reloaded");
     }

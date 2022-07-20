@@ -1,29 +1,51 @@
 package com.mittenmc.customitems.items;
 
+import com.github.mittenmc.serverutils.Colors;
 import com.mittenmc.customitems.CustomItems;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.io.File;
 import java.util.*;
 
-public class ItemManager {
+public class ItemManager implements Listener {
 
     private final Map<String, CustomItemStack> customItemStacks;
     private ArrayList<CustomItemStack> sortedCustomItemStacks;
     private ArrayList<String> sortedCustomItemStackIDs;
 
+    private boolean isStoppingCustomItemPlacement;
+    private String stopPlacementMessage;
+
     public ItemManager() {
         customItemStacks = new HashMap<>();
         sortedCustomItemStacks = new ArrayList<>();
+        reload();
+    }
+
+    public void reload() {
+        FileConfiguration config = CustomItems.getInstance().getConfig();
+        config.options().copyDefaults(true);
+        config.addDefault("stopCustomItemPlacement", true);
+        config.addDefault("stopPlacementMessage", "&cYou cannot place this");
+        CustomItems.getInstance().saveConfig();
+
+        isStoppingCustomItemPlacement = config.getBoolean("stopCustomItemPlacement");
+        stopPlacementMessage = Colors.conv(config.getString("stopPlacementMessage"));
+
         reloadAllItems();
     }
 
     /**
      * Reloads all custom items from all .yml files in the plugin directory
      */
-    public void reloadAllItems() {
+    private void reloadAllItems() {
         customItemStacks.clear();
         sortedCustomItemStacks.clear();
 
@@ -87,6 +109,16 @@ public class ItemManager {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    @EventHandler
+    private void onCustomItemPlace(BlockPlaceEvent e) {
+        if (isStoppingCustomItemPlacement && e.getItemInHand().getItemMeta() != null && e.getItemInHand().getItemMeta().getPersistentDataContainer().has(new NamespacedKey(CustomItems.getInstance(), "custom_item_id"), PersistentDataType.STRING)) {
+            e.setCancelled(true);
+            if (!stopPlacementMessage.trim().isEmpty()) {
+                e.getPlayer().sendMessage(stopPlacementMessage);
             }
         }
     }

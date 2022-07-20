@@ -19,6 +19,7 @@ public final class CustomItems extends JavaPlugin {
         instance = this;
 
         itemManager = new ItemManager();
+        getServer().getPluginManager().registerEvents(itemManager, this);
         guiManager = new GUIManager();
 
         getServer().getPluginManager().registerEvents(guiManager, this);

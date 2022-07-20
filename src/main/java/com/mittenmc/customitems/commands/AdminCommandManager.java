@@ -1,11 +1,14 @@
 package com.mittenmc.customitems.commands;
 
+import com.github.mittenmc.serverutils.SubCommand;
 import com.mittenmc.customitems.commands.admincommands.*;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +16,7 @@ import java.util.List;
 public class AdminCommandManager implements TabExecutor {
 
     private final ArrayList<SubCommand> subcommands = new ArrayList<>();
+    private final ArrayList<String> subcommandStrings = new ArrayList<>();
 
     public AdminCommandManager() {
         subcommands.add(new AddToMiscRewardsCommand());
@@ -21,10 +25,14 @@ public class AdminCommandManager implements TabExecutor {
         subcommands.add(new OpenItemListCommand());
         subcommands.add(new ReloadCommand());
         //subcommands.add(new SaveItemCommand());
+
+        for (SubCommand subCommand : subcommands) {
+            subcommandStrings.add(subCommand.getName());
+        }
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
 
         if (args.length > 0) {
             for (int i = 0; i < getSubcommands().size(); i++) {
@@ -45,16 +53,13 @@ public class AdminCommandManager implements TabExecutor {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
         if (args.length == 1) {
             ArrayList<String> subcommandsArguments = new ArrayList<>();
 
-            for (SubCommand subcommand : subcommands) {
-                subcommandsArguments.add(subcommand.getName());
-            }
+            StringUtil.copyPartialMatches(args[0], subcommandStrings, subcommandsArguments);
 
             return subcommandsArguments;
-
         }
         else if (args.length >= 2) {
             for (SubCommand subcommand : subcommands) {

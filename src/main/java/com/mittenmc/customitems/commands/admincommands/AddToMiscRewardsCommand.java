@@ -1,7 +1,7 @@
 package com.mittenmc.customitems.commands.admincommands;
 
+import com.github.mittenmc.serverutils.SubCommand;
 import com.mittenmc.customitems.CustomItems;
-import com.mittenmc.customitems.commands.SubCommand;
 import com.mittenmc.customitems.items.CustomItemStack;
 import me.gavvydizzle.rewardsinventory.api.RewardsInventoryAPI;
 import org.bukkit.Bukkit;
@@ -9,6 +9,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,7 +93,9 @@ public class AddToMiscRewardsCommand extends SubCommand {
             return null;
         }
         else if (args.length == 3) {
-            return CustomItems.getInstance().getItemManager().getSortedCustomItemStackIDs();
+            ArrayList<String> list = new ArrayList<>();
+            StringUtil.copyPartialMatches(args[2], CustomItems.getInstance().getItemManager().getSortedCustomItemStackIDs(), list);
+            return list;
         }
 
         return new ArrayList<>();
