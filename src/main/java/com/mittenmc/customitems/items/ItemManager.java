@@ -9,6 +9,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.inventory.CraftingInventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.io.File;
@@ -20,7 +23,7 @@ public class ItemManager implements Listener {
     private ArrayList<CustomItemStack> sortedCustomItemStacks;
     private ArrayList<String> sortedCustomItemStackIDs;
 
-    private boolean isStoppingCustomItemPlacement;
+    private boolean isStoppingCustomItemPlacement, isStoppingCustomItemCrafting;
     private String stopPlacementMessage;
 
     public ItemManager() {
@@ -34,10 +37,12 @@ public class ItemManager implements Listener {
         config.options().copyDefaults(true);
         config.addDefault("stopCustomItemPlacement", true);
         config.addDefault("stopPlacementMessage", "&cYou cannot place this");
+        config.addDefault("stopCustomItemCrafting", true);
         CustomItems.getInstance().saveConfig();
 
         isStoppingCustomItemPlacement = config.getBoolean("stopCustomItemPlacement");
         stopPlacementMessage = Colors.conv(config.getString("stopPlacementMessage"));
+        isStoppingCustomItemCrafting = config.getBoolean("stopCustomItemCrafting");
 
         reloadAllItems();
     }
@@ -115,12 +120,30 @@ public class ItemManager implements Listener {
 
     @EventHandler
     private void onCustomItemPlace(BlockPlaceEvent e) {
-        if (isStoppingCustomItemPlacement && e.getItemInHand().getItemMeta() != null && e.getItemInHand().getItemMeta().getPersistentDataContainer().has(new NamespacedKey(CustomItems.getInstance(), "custom_item_id"), PersistentDataType.STRING)) {
+        if (isStoppingCustomItemPlacement && isCustomItem(e.getItemInHand())) {
             e.setCancelled(true);
             if (!stopPlacementMessage.trim().isEmpty()) {
                 e.getPlayer().sendMessage(stopPlacementMessage);
             }
         }
+    }
+
+    @EventHandler
+    private void onCustomItemCraft(PrepareItemCraftEvent e) {
+        if (!isStoppingCustomItemCrafting) return;
+
+        CraftingInventory inv = e.getInventory();
+        for (ItemStack item : inv.getStorageContents()) {
+            if (isCustomItem(item)) {
+                inv.setResult(null);
+                return;
+            }
+        }
+    }
+
+    public boolean isCustomItem(ItemStack itemStack) {
+        if (itemStack.getItemMeta() == null) return false;
+        return itemStack.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(CustomItems.getInstance(), "custom_item_id"), PersistentDataType.STRING);
     }
 
     /**
