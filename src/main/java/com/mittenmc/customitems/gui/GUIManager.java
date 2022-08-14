@@ -26,9 +26,8 @@ public class GUIManager implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
-        if (e.getClickedInventory() == null) {
-            return;
-        }
+        if (e.getClickedInventory() == null) return;
+        if (e.getClickedInventory() != e.getWhoClicked().getOpenInventory().getTopInventory()) return;
 
         if (playersInGUI.contains(e.getWhoClicked().getUniqueId())) {
             e.setCancelled(true);

@@ -1,8 +1,8 @@
 package com.mittenmc.customitems.items;
 
 import com.cryptomorin.xseries.SkullUtils;
-import com.cryptomorin.xseries.XMaterial;
 import com.github.mittenmc.serverutils.Colors;
+import com.github.mittenmc.serverutils.ConfigUtils;
 import com.mittenmc.customitems.CustomItems;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -21,9 +21,11 @@ import java.util.Objects;
 public class CustomItemStack {
 
     private final String id, uncoloredName;
+    private final boolean isPlaceable;
     private final ItemStack item, itemListItem;
 
     public CustomItemStack(String id,
+                           boolean isPlaceable,
                            String displayName,
                            String material,
                            List<String> lore,
@@ -32,6 +34,7 @@ public class CustomItemStack {
                            String skullString) {
 
         this.id = id;
+        this.isPlaceable = isPlaceable;
         String name = Colors.conv(displayName);
         this.uncoloredName = Colors.strip(name);
 
@@ -42,9 +45,7 @@ public class CustomItemStack {
             item.setItemMeta(meta);
         }
         else {
-            XMaterial xMaterial = XMaterial.matchXMaterial(material).isPresent() ? XMaterial.matchXMaterial(material).get() : XMaterial.DIRT;
-            item = xMaterial.parseItem();
-            assert item != null;
+            item = new ItemStack(ConfigUtils.getMaterial(material));
             ItemMeta meta = item.getItemMeta();
             assert meta != null;
 
@@ -74,6 +75,10 @@ public class CustomItemStack {
 
     public String getId() {
         return id;
+    }
+
+    public boolean isPlaceable() {
+        return isPlaceable;
     }
 
     public String getUncoloredName() {

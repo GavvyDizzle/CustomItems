@@ -23,7 +23,7 @@ public class ItemManager implements Listener {
     private ArrayList<CustomItemStack> sortedCustomItemStacks;
     private ArrayList<String> sortedCustomItemStackIDs;
 
-    private boolean isStoppingCustomItemPlacement, isStoppingCustomItemCrafting;
+    private boolean isStoppingCustomItemCrafting;
     private String stopPlacementMessage;
 
     public ItemManager() {
@@ -35,12 +35,10 @@ public class ItemManager implements Listener {
     public void reload() {
         FileConfiguration config = CustomItems.getInstance().getConfig();
         config.options().copyDefaults(true);
-        config.addDefault("stopCustomItemPlacement", true);
         config.addDefault("stopPlacementMessage", "&cYou cannot place this");
         config.addDefault("stopCustomItemCrafting", true);
         CustomItems.getInstance().saveConfig();
 
-        isStoppingCustomItemPlacement = config.getBoolean("stopCustomItemPlacement");
         stopPlacementMessage = Colors.conv(config.getString("stopPlacementMessage"));
         isStoppingCustomItemCrafting = config.getBoolean("stopCustomItemCrafting");
 
@@ -81,10 +79,6 @@ public class ItemManager implements Listener {
 
                 final FileConfiguration config = YamlConfiguration.loadConfiguration(fileEntry);
 
-                config.options().copyDefaults(true);
-                config.addDefault("items", new HashMap<>());
-                config.saveToString();
-
                 if (config.getConfigurationSection("items") == null) {
                     Bukkit.getLogger().warning("The file " + config.getName() + " is empty");
                 }
@@ -101,6 +95,7 @@ public class ItemManager implements Listener {
                         try {
                             customItemStacks.put(key.toLowerCase(), new CustomItemStack(
                                     key.toLowerCase(),
+                                    config.getBoolean(path + ".allowPlacement"),
                                     config.getString(path + ".displayName"),
                                     config.getString(path + ".material"),
                                     config.getStringList(path + ".lore"),
@@ -111,6 +106,7 @@ public class ItemManager implements Listener {
                         }
                         catch (Exception e) {
                             Bukkit.getLogger().warning("Failed to add item " + key + " from file " + config.getName());
+                            e.printStackTrace();
                         }
                     }
                 }
@@ -120,10 +116,12 @@ public class ItemManager implements Listener {
 
     @EventHandler
     private void onCustomItemPlace(BlockPlaceEvent e) {
-        if (isStoppingCustomItemPlacement && isCustomItem(e.getItemInHand())) {
-            e.setCancelled(true);
-            if (!stopPlacementMessage.trim().isEmpty()) {
-                e.getPlayer().sendMessage(stopPlacementMessage);
+        if (isCustomItem(e.getItemInHand())) {
+            if (!isCustomItemPlaceable(e.getItemInHand())) {
+                e.setCancelled(true);
+                if (!stopPlacementMessage.trim().isEmpty()) {
+                    e.getPlayer().sendMessage(stopPlacementMessage);
+                }
             }
         }
     }
@@ -144,6 +142,12 @@ public class ItemManager implements Listener {
     public boolean isCustomItem(ItemStack itemStack) {
         if (itemStack.getItemMeta() == null) return false;
         return itemStack.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(CustomItems.getInstance(), "custom_item_id"), PersistentDataType.STRING);
+    }
+
+    public boolean isCustomItemPlaceable(ItemStack itemStack) {
+        if (itemStack.getItemMeta() == null) return false;
+        CustomItemStack customItemStack = customItemStacks.get(itemStack.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(CustomItems.getInstance(), "custom_item_id"), PersistentDataType.STRING));
+        return customItemStack.isPlaceable();
     }
 
     /**

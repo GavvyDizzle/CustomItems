@@ -1,6 +1,7 @@
 package com.mittenmc.customitems.commands;
 
 import com.github.mittenmc.serverutils.SubCommand;
+import com.mittenmc.customitems.CustomItems;
 import com.mittenmc.customitems.commands.admincommands.*;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -42,8 +43,13 @@ public class AdminCommandManager implements TabExecutor {
                 }
             }
             sender.sendMessage(ChatColor.RED + "Invalid command");
+            sender.sendMessage(ChatColor.YELLOW + "Use '/customitems help' to see a list of valid commands");
         }
-        sender.sendMessage(ChatColor.YELLOW + "Use '/customitems help' to see a list of valid commands");
+        else {
+            if (sender instanceof Player) {
+                CustomItems.getInstance().getGUIManager().openItemListInventory((Player) sender);
+            }
+        }
 
         return true;
     }
