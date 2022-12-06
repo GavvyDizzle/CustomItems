@@ -53,8 +53,6 @@ public class ItemListGUI {
         nextPageItem.setItemMeta(nextPageMeta);
 
         playersInGUI = new HashMap<>();
-
-        reload();
     }
 
     public void reload() {
@@ -99,18 +97,18 @@ public class ItemListGUI {
         if (slot == pageUpSlot) {
             if (page < maxPage) {
                 playersInGUI.put(player.getUniqueId(), page + 1);
-                updateQuestItems(player);
+                updatePageItems(player);
                 player.getOpenInventory().getTopInventory().setItem(pageInfoSlot, getPageItem(page + 1));
             }
         }
         else if (slot == pageDownSlot) {
             if (page > 1) {
                 playersInGUI.put(player.getUniqueId(), page - 1);
-                updateQuestItems(player);
+                updatePageItems(player);
                 player.getOpenInventory().getTopInventory().setItem(pageInfoSlot, getPageItem(page - 1));
             }
         }
-        else {
+        else if (slot < 45) {
             int index = getItemIndexSlot(page, slot);
             ArrayList<CustomItemStack> customItemStacks = CustomItems.getInstance().getItemManager().getSortedCustomItemStacks();
             if (customItemStacks.size() > index) {
@@ -120,7 +118,7 @@ public class ItemListGUI {
     }
 
     //Update slots 0-45 when the page is turned
-    private void updateQuestItems(Player player) {
+    private void updatePageItems(Player player) {
         Inventory inventory = player.getOpenInventory().getTopInventory();
         int page = playersInGUI.get(player.getUniqueId());
 
@@ -139,6 +137,7 @@ public class ItemListGUI {
     protected ItemStack getPageItem(int page) {
         ItemStack pageInfo = pageInfoItem.clone();
         ItemMeta meta = pageInfo.getItemMeta();
+        assert meta != null;
         meta.setDisplayName(ChatColor.YELLOW + "Page " + page + "/" + maxPage);
         pageInfo.setItemMeta(meta);
         return pageInfo;

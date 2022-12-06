@@ -27,7 +27,7 @@ public class GiveToPlayerCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/customitems give <player> <item-id> <amount>";
+        return "/customitems give <player> <item-id> [amount]";
     }
 
     @Override

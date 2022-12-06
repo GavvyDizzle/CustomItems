@@ -33,9 +33,15 @@ public class ReloadCommand extends SubCommand {
 
     @Override
     public void perform(CommandSender sender, String[] args) {
-        CustomItems.getInstance().reloadConfig();
-        CustomItems.getInstance().getItemManager().reload();
-        CustomItems.getInstance().getGUIManager().reloadAllGUIs();
+        try {
+            CustomItems.getInstance().reloadConfig();
+            CustomItems.getInstance().getItemManager().reload();
+        } catch (Exception e) {
+            sender.sendMessage(ChatColor.RED + "[CustomItems] Encountered an error when reloading. Check the console");
+            e.printStackTrace();
+            return;
+        }
+
         sender.sendMessage(ChatColor.GREEN + "[CustomItems] Reloaded");
     }
 

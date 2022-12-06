@@ -62,6 +62,8 @@ public class ItemManager implements Listener {
                 for (CustomItemStack customItemStack : sortedCustomItemStacks) {
                     sortedCustomItemStackIDs.add(customItemStack.getId());
                 }
+
+                CustomItems.getInstance().getGUIManager().reloadAllGUIs();
             });
         }
         catch (Exception e) {
@@ -80,7 +82,7 @@ public class ItemManager implements Listener {
                 final FileConfiguration config = YamlConfiguration.loadConfiguration(fileEntry);
 
                 if (config.getConfigurationSection("items") == null) {
-                    Bukkit.getLogger().warning("The file " + config.getName() + " is empty");
+                    Bukkit.getLogger().warning("The file " + fileEntry.getName() + " is empty");
                 }
                 else {
                     for (String key : config.getConfigurationSection("items").getKeys(false)) {
@@ -88,7 +90,7 @@ public class ItemManager implements Listener {
 
                         String id = key.toLowerCase();
                         if (customItemStacks.containsKey(id)) {
-                            Bukkit.getLogger().warning("You have defined '" + key + "' multiple times. This occurrence is in " + config.getName());
+                            Bukkit.getLogger().warning("You have defined '" + key + "' multiple times. This occurrence is in " + fileEntry.getName());
                             continue;
                         }
 
@@ -105,7 +107,7 @@ public class ItemManager implements Listener {
                             ));
                         }
                         catch (Exception e) {
-                            Bukkit.getLogger().warning("Failed to add item " + key + " from file " + config.getName());
+                            Bukkit.getLogger().warning("Failed to add item " + key + " from file " + fileEntry.getName());
                             e.printStackTrace();
                         }
                     }

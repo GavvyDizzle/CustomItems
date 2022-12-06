@@ -6,6 +6,7 @@ import com.mittenmc.customitems.items.CustomItemStack;
 import me.gavvydizzle.rewardsinventory.api.RewardsInventoryAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -34,7 +35,7 @@ public class AddToMiscRewardsCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/customitems addMisc <player> <item-id> <amount>";
+        return "/customitems addMisc <player> <item-id> [amount]";
     }
 
     @Override
@@ -49,8 +50,8 @@ public class AddToMiscRewardsCommand extends SubCommand {
             return;
         }
 
-        Player player = Bukkit.getPlayer(args[1]);
-        if (player == null) {
+        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[1]);
+        if (!offlinePlayer.hasPlayedBefore()) {
             sender.sendMessage(ChatColor.RED + "Invalid player");
             return;
         }
@@ -78,13 +79,14 @@ public class AddToMiscRewardsCommand extends SubCommand {
 
             ItemStack itemStack = customItemStack.getItem().clone();
             itemStack.setAmount(amount);
-            rewardsInventoryAPI.addMiscItem(player, itemStack);
+            rewardsInventoryAPI.addMiscItem(offlinePlayer, itemStack);
         }
         else {
             amount = 1;
-            rewardsInventoryAPI.addMiscItem(player, customItemStack.getItem());
+            rewardsInventoryAPI.addMiscItem(offlinePlayer, customItemStack.getItem());
         }
-        sender.sendMessage(ChatColor.GREEN + "Successfully put " + amount + " " + customItemStack.getId() + " into " + player.getName() + "'s /rew misc inventory");
+        sender.sendMessage(ChatColor.GREEN + "Successfully put " + amount + " " + customItemStack.getId() + " into " + offlinePlayer.getName() + "'s /rew misc inventory");
+        CustomItems.getInstance().getLogger().info(offlinePlayer.getName() + " received the item: " + customItemStack.getId());
     }
 
     @Override
