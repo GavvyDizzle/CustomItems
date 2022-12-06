@@ -3,6 +3,7 @@ package com.mittenmc.customitems.commands.admincommands;
 import com.github.mittenmc.serverutils.SubCommand;
 import com.mittenmc.customitems.CustomItems;
 import com.mittenmc.customitems.items.CustomItemStack;
+import com.mittenmc.customitems.items.ItemManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -11,9 +12,16 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class GiveToPlayerCommand extends SubCommand {
+
+    private final ItemManager itemManager;
+
+    public GiveToPlayerCommand() {
+        this.itemManager = CustomItems.getInstance().getItemManager();
+    }
 
     @Override
     public String getName() {
@@ -71,13 +79,22 @@ public class GiveToPlayerCommand extends SubCommand {
 
             ItemStack itemStack = customItemStack.getItem().clone();
             itemStack.setAmount(amount);
-            player.getInventory().addItem(itemStack);
+            HashMap<Integer, ItemStack> map = player.getInventory().addItem(itemStack);
+
+            if (itemManager.isDropExtraItems()) {
+                for (ItemStack i : map.values()) {
+                    player.getWorld().dropItem(player.getLocation(), i);
+                }
+            }
         }
         else {
             amount = 1;
             player.getInventory().addItem(customItemStack.getItem());
         }
-        sender.sendMessage(ChatColor.GREEN + "Successfully gave " + player.getName() + " " + amount + " " + customItemStack.getId());
+
+        if (sender instanceof Player) {
+            sender.sendMessage(ChatColor.GREEN + "Successfully gave " + player.getName() + " " + amount + " " + customItemStack.getId());
+        }
     }
 
     @Override

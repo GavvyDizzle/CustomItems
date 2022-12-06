@@ -13,12 +13,13 @@ public final class CustomItems extends JavaPlugin {
     private ItemManager itemManager;
     private GUIManager guiManager;
     private AdminCommandManager adminCommandManager;
+    private boolean isRewardsInventoryLoaded;
 
     @Override
     public void onEnable() {
         instance = this;
 
-        itemManager = new ItemManager();
+        itemManager = new ItemManager(); // Must create this before the AdminCommandManager
         getServer().getPluginManager().registerEvents(itemManager, this);
         guiManager = new GUIManager();
 
@@ -30,11 +31,8 @@ public final class CustomItems extends JavaPlugin {
         getConfig().options().copyDefaults(true);
         getConfig().addDefault("items", new HashMap<>());
         saveConfig();
-    }
 
-    @Override
-    public void onDisable() {
-        // Plugin shutdown logic
+        isRewardsInventoryLoaded = getServer().getPluginManager().getPlugin("RewardsInventory") != null;
     }
 
     public static CustomItems getInstance() {
@@ -51,6 +49,10 @@ public final class CustomItems extends JavaPlugin {
 
     public AdminCommandManager getAdminCommandManager() {
         return adminCommandManager;
+    }
+
+    public boolean isRewardsInventoryLoaded() {
+        return isRewardsInventoryLoaded;
     }
 
 }

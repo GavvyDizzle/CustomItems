@@ -15,6 +15,7 @@ import org.bukkit.util.StringUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+// Requires RewardsInventory active to be loaded!
 public class AddToMiscRewardsCommand extends SubCommand {
 
     private final RewardsInventoryAPI rewardsInventoryAPI;
@@ -51,7 +52,7 @@ public class AddToMiscRewardsCommand extends SubCommand {
         }
 
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[1]);
-        if (!offlinePlayer.hasPlayedBefore()) {
+        if (!offlinePlayer.hasPlayedBefore() || offlinePlayer.isOnline()) {
             sender.sendMessage(ChatColor.RED + "Invalid player");
             return;
         }

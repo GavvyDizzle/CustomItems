@@ -2,7 +2,8 @@ name: CustomItems
 version: '${project.version}'
 api-version: 1.18
 main: com.mittenmc.customitems.CustomItems
-depend: [RewardsInventory, ServerUtils]
+depend: [ServerUtils]
+softdepend: [RewardsInventory]
 authors: [GavvyDizzle]
 description: Custom item maker for Spigot
 commands:

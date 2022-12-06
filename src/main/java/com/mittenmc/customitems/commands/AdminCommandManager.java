@@ -20,12 +20,13 @@ public class AdminCommandManager implements TabExecutor {
     private final ArrayList<String> subcommandStrings = new ArrayList<>();
 
     public AdminCommandManager() {
-        subcommands.add(new AddToMiscRewardsCommand());
+        if (CustomItems.getInstance().isRewardsInventoryLoaded()) {
+            subcommands.add(new AddToMiscRewardsCommand());
+        }
         subcommands.add(new AdminHelpCommand());
         subcommands.add(new GiveToPlayerCommand());
         subcommands.add(new OpenItemListCommand());
         subcommands.add(new ReloadCommand());
-        //subcommands.add(new SaveItemCommand());
 
         for (SubCommand subCommand : subcommands) {
             subcommandStrings.add(subCommand.getName());

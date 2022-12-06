@@ -23,7 +23,7 @@ public class ItemManager implements Listener {
     private ArrayList<CustomItemStack> sortedCustomItemStacks;
     private ArrayList<String> sortedCustomItemStackIDs;
 
-    private boolean isStoppingCustomItemCrafting;
+    private boolean isStoppingCustomItemCrafting, dropExtraItems;
     private String stopPlacementMessage;
 
     public ItemManager() {
@@ -37,10 +37,12 @@ public class ItemManager implements Listener {
         config.options().copyDefaults(true);
         config.addDefault("stopPlacementMessage", "&cYou cannot place this");
         config.addDefault("stopCustomItemCrafting", true);
+        config.addDefault("dropExtraItems", false);
         CustomItems.getInstance().saveConfig();
 
         stopPlacementMessage = Colors.conv(config.getString("stopPlacementMessage"));
         isStoppingCustomItemCrafting = config.getBoolean("stopCustomItemCrafting");
+        dropExtraItems = config.getBoolean("dropExtraItems");
 
         reloadAllItems();
     }
@@ -167,6 +169,10 @@ public class ItemManager implements Listener {
 
     public ArrayList<String> getSortedCustomItemStackIDs() {
         return sortedCustomItemStackIDs;
+    }
+
+    public boolean isDropExtraItems() {
+        return dropExtraItems;
     }
 
 }
