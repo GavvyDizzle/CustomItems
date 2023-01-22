@@ -19,6 +19,7 @@ import java.util.*;
 
 public class ItemManager implements Listener {
 
+    private final NamespacedKey idKey;
     private final Map<String, CustomItemStack> customItemStacks;
     private ArrayList<CustomItemStack> sortedCustomItemStacks;
     private ArrayList<String> sortedCustomItemStackIDs;
@@ -27,6 +28,7 @@ public class ItemManager implements Listener {
     private String stopPlacementMessage;
 
     public ItemManager() {
+        idKey = new NamespacedKey(CustomItems.getInstance(), "custom_item_id");
         customItemStacks = new HashMap<>();
         sortedCustomItemStacks = new ArrayList<>();
         reload();
@@ -145,12 +147,12 @@ public class ItemManager implements Listener {
 
     public boolean isCustomItem(ItemStack itemStack) {
         if (itemStack.getItemMeta() == null) return false;
-        return itemStack.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(CustomItems.getInstance(), "custom_item_id"), PersistentDataType.STRING);
+        return itemStack.getItemMeta().getPersistentDataContainer().has(idKey, PersistentDataType.STRING);
     }
 
     public boolean isCustomItemPlaceable(ItemStack itemStack) {
         if (itemStack.getItemMeta() == null) return false;
-        CustomItemStack customItemStack = customItemStacks.get(itemStack.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(CustomItems.getInstance(), "custom_item_id"), PersistentDataType.STRING));
+        CustomItemStack customItemStack = customItemStacks.get(itemStack.getItemMeta().getPersistentDataContainer().get(idKey, PersistentDataType.STRING));
         return customItemStack.isPlaceable();
     }
 
@@ -173,6 +175,10 @@ public class ItemManager implements Listener {
 
     public boolean isDropExtraItems() {
         return dropExtraItems;
+    }
+
+    public NamespacedKey getIdKey() {
+        return idKey;
     }
 
 }

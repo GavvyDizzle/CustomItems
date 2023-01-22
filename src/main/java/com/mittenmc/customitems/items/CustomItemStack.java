@@ -6,7 +6,6 @@ import com.github.mittenmc.serverutils.ConfigUtils;
 import com.mittenmc.customitems.CustomItems;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -59,8 +58,7 @@ public class CustomItemStack {
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(Colors.conv(displayName));
         meta.setLore(Colors.conv(lore));
-        NamespacedKey key = new NamespacedKey(CustomItems.getInstance(), "custom_item_id");
-        meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, id);
+        meta.getPersistentDataContainer().set(CustomItems.getInstance().getItemManager().getIdKey(), PersistentDataType.STRING, id);
         item.setItemMeta(meta);
 
         itemListItem = item.clone();
