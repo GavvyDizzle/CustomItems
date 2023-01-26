@@ -1,5 +1,6 @@
 package com.mittenmc.customitems.commands.admincommands;
 
+import com.github.mittenmc.serverutils.Numbers;
 import com.github.mittenmc.serverutils.SubCommand;
 import com.mittenmc.customitems.CustomItems;
 import com.mittenmc.customitems.items.CustomItemStack;
@@ -79,6 +80,7 @@ public class AddToMiscRewardsCommand extends SubCommand {
             }
 
             ItemStack itemStack = customItemStack.getItem().clone();
+            if (!customItemStack.isUsesItem()) amount = Numbers.constrain(amount, 1, itemStack.getMaxStackSize());
             itemStack.setAmount(amount);
             rewardsInventoryAPI.addMiscItem(offlinePlayer, itemStack);
         }

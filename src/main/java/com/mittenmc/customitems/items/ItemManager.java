@@ -20,7 +20,7 @@ import java.util.*;
 
 public class ItemManager implements Listener {
 
-    private final NamespacedKey idKey, usagesKey;
+    private final NamespacedKey idKey, usagesKey, randKey;
     private final Map<String, CustomItemStack> customItemStacks;
     private ArrayList<CustomItemStack> sortedCustomItemStacks;
     private ArrayList<String> sortedCustomItemStackIDs;
@@ -31,6 +31,7 @@ public class ItemManager implements Listener {
     public ItemManager() {
         idKey = new NamespacedKey(CustomItems.getInstance(), "custom_item_id");
         usagesKey = new NamespacedKey(CustomItems.getInstance(), "uses_remaining");
+        randKey = new NamespacedKey(CustomItems.getInstance(), "rand");
         customItemStacks = new HashMap<>();
         sortedCustomItemStacks = new ArrayList<>();
         reload();
@@ -232,5 +233,9 @@ public class ItemManager implements Listener {
 
     public NamespacedKey getUsagesKey() {
         return usagesKey;
+    }
+
+    public NamespacedKey getRandKey() {
+        return randKey;
     }
 }

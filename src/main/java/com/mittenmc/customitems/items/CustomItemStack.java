@@ -3,6 +3,7 @@ package com.mittenmc.customitems.items;
 import com.cryptomorin.xseries.SkullUtils;
 import com.github.mittenmc.serverutils.Colors;
 import com.github.mittenmc.serverutils.ConfigUtils;
+import com.github.mittenmc.serverutils.UUIDConverter;
 import com.mittenmc.customitems.CustomItems;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -16,13 +17,14 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 public class CustomItemStack {
 
     private final String id, uncoloredName;
     private final boolean isPlaceable;
     private final int numUses;
-    private final ItemStack item, usesItem, itemListItem;
+    private final ItemStack item, usesItem, itemListItem, itemListUsesItem;
 
     public CustomItemStack(String id,
                            boolean isPlaceable,
@@ -62,7 +64,7 @@ public class CustomItemStack {
         meta.setDisplayName(Colors.conv(displayName));
         meta.setLore(Colors.conv(lore));
         meta.getPersistentDataContainer().set(CustomItems.getInstance().getItemManager().getIdKey(), PersistentDataType.STRING, id);
-        if (isUsesItem()) meta.getPersistentDataContainer().set(CustomItems.getInstance().getItemManager().getIdKey(), PersistentDataType.INTEGER, numUses);
+        if (isUsesItem()) meta.getPersistentDataContainer().set(CustomItems.getInstance().getItemManager().getUsagesKey(), PersistentDataType.INTEGER, numUses);
         item.setItemMeta(meta);
 
         if (isUsesItem()) {
@@ -88,6 +90,21 @@ public class CustomItemStack {
         itemListLore.add(ChatColor.YELLOW + "id: " + ChatColor.GREEN + id);
         meta.setLore(itemListLore);
         itemListItem.setItemMeta(meta);
+
+        if (isUsesItem()) {
+            itemListUsesItem = itemListItem.clone();
+            meta = itemListUsesItem.getItemMeta();
+            assert meta != null;
+            ArrayList<String> usesLore = new ArrayList<>();
+            for (String str : Objects.requireNonNull(meta.getLore())) {
+                usesLore.add(str.replace("{uses}", "" + numUses));
+            }
+            meta.setLore(usesLore);
+            itemListUsesItem.setItemMeta(meta);
+        }
+        else {
+            itemListUsesItem = null;
+        }
     }
 
     public boolean isUsesItem() {
@@ -108,7 +125,15 @@ public class CustomItemStack {
     }
 
     public ItemStack getItem() {
-        if (isUsesItem()) return usesItem;
+        // Add a unique tag to any "uses" item, so they cannot stack
+        if (isUsesItem()) {
+            ItemStack clone = usesItem.clone();
+            ItemMeta meta = clone.getItemMeta();
+            assert meta != null;
+            meta.getPersistentDataContainer().set(CustomItems.getInstance().getItemManager().getRandKey(), PersistentDataType.BYTE_ARRAY, UUIDConverter.convert(UUID.randomUUID()));
+            clone.setItemMeta(meta);
+            return clone;
+        }
         return item;
     }
 
@@ -117,6 +142,7 @@ public class CustomItemStack {
     }
 
     public ItemStack getItemListItem() {
+        if (isUsesItem()) return itemListUsesItem;
         return itemListItem;
     }
 }

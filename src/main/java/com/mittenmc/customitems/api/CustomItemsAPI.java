@@ -71,7 +71,7 @@ public class CustomItemsAPI {
 
     /**
      * Gets this item's uses as defined with this plugin.
-     * This method gets the "uses" field from this item using PDC.
+     * This method gets the "uses_remaining" field from this item using PDC.
      * @param itemStack The ItemStack
      * @return The item's uses or -1 if it cannot be found
      */
