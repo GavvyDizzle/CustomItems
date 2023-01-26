@@ -12,6 +12,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.io.File;
@@ -19,7 +20,7 @@ import java.util.*;
 
 public class ItemManager implements Listener {
 
-    private final NamespacedKey idKey;
+    private final NamespacedKey idKey, usagesKey;
     private final Map<String, CustomItemStack> customItemStacks;
     private ArrayList<CustomItemStack> sortedCustomItemStacks;
     private ArrayList<String> sortedCustomItemStackIDs;
@@ -29,6 +30,7 @@ public class ItemManager implements Listener {
 
     public ItemManager() {
         idKey = new NamespacedKey(CustomItems.getInstance(), "custom_item_id");
+        usagesKey = new NamespacedKey(CustomItems.getInstance(), "uses_remaining");
         customItemStacks = new HashMap<>();
         sortedCustomItemStacks = new ArrayList<>();
         reload();
@@ -102,6 +104,7 @@ public class ItemManager implements Listener {
                             customItemStacks.put(key.toLowerCase(), new CustomItemStack(
                                     key.toLowerCase(),
                                     config.getBoolean(path + ".allowPlacement"),
+                                    config.getInt(path + ".uses"),
                                     config.getString(path + ".displayName"),
                                     config.getString(path + ".material"),
                                     config.getStringList(path + ".lore"),
@@ -145,6 +148,32 @@ public class ItemManager implements Listener {
         }
     }
 
+    /**
+     * Updates the uses in the lore of an item
+     * @param itemStack The ItemStack
+     * @return If the lore of this item updates
+     */
+    public boolean updateUsesLore(ItemStack itemStack) {
+        CustomItemStack customItemStack = getCustomItem(itemStack);
+        if (customItemStack == null || !customItemStack.isUsesItem()) return false;
+
+        try {
+            ItemMeta meta = itemStack.getItemMeta();
+            assert meta != null;
+            ArrayList<String> lore = new ArrayList<>();
+            for (String str : customItemStack.getNonUsesLore()) {
+                lore.add(str.replace("{uses}", "" + getCustomItemUses(itemStack)));
+            }
+            meta.setLore(lore);
+            itemStack.setItemMeta(meta);
+            return true;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public boolean isCustomItem(ItemStack itemStack) {
         if (itemStack.getItemMeta() == null) return false;
         return itemStack.getItemMeta().getPersistentDataContainer().has(idKey, PersistentDataType.STRING);
@@ -152,8 +181,28 @@ public class ItemManager implements Listener {
 
     public boolean isCustomItemPlaceable(ItemStack itemStack) {
         if (itemStack.getItemMeta() == null) return false;
-        CustomItemStack customItemStack = customItemStacks.get(itemStack.getItemMeta().getPersistentDataContainer().get(idKey, PersistentDataType.STRING));
-        return customItemStack.isPlaceable();
+        return getCustomItem(itemStack).isPlaceable();
+    }
+
+    public boolean doesCustomItemHaveUses(ItemStack itemStack) {
+        if (itemStack.getItemMeta() == null) return false;
+        return itemStack.getItemMeta().getPersistentDataContainer().has(usagesKey, PersistentDataType.INTEGER);
+    }
+
+    public int getCustomItemUses(ItemStack itemStack) {
+        if (!doesCustomItemHaveUses(itemStack)) return -1;
+        assert itemStack.getItemMeta() != null;
+        return itemStack.getItemMeta().getPersistentDataContainer().get(usagesKey, PersistentDataType.INTEGER);
+    }
+
+    /**
+     * Gets the CustomItemStack associated with this ItemStack
+     * @param itemStack The ItemStack
+     * @return The CustomItemStack or null if none exists for this item
+     */
+    public CustomItemStack getCustomItem(ItemStack itemStack) {
+        if (itemStack.getItemMeta() == null) return null;
+        return customItemStacks.get(itemStack.getItemMeta().getPersistentDataContainer().get(idKey, PersistentDataType.STRING));
     }
 
     /**
@@ -181,4 +230,7 @@ public class ItemManager implements Listener {
         return idKey;
     }
 
+    public NamespacedKey getUsagesKey() {
+        return usagesKey;
+    }
 }

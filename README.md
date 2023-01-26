@@ -32,6 +32,7 @@ Create custom items and skulls for your server! Each item can be customized to f
  - `isSkull:` If set to true, the item will look to the `skullLink` field for its skull link. If this field is omitted, the item will default it to false
  - `skullLink:` The link the item will parse to get the skull's texture. I use https://minecraft-heads.com/ and use the link from `Other -> Minecraft-URL`
  - `allowPlacement:` If true, this item can be placed
+ - `uses:` The number of uses this item has (Used in the API, leave blank unless you know what you are doing)
 
 **Final Notes:**
  - If an item looks wrong, then something likely went wrong internally. Check the console for a description of the error

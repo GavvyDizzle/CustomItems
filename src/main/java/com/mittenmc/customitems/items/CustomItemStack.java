@@ -21,10 +21,12 @@ public class CustomItemStack {
 
     private final String id, uncoloredName;
     private final boolean isPlaceable;
-    private final ItemStack item, itemListItem;
+    private final int numUses;
+    private final ItemStack item, usesItem, itemListItem;
 
     public CustomItemStack(String id,
                            boolean isPlaceable,
+                           int numUses,
                            String displayName,
                            String material,
                            List<String> lore,
@@ -34,6 +36,7 @@ public class CustomItemStack {
 
         this.id = id;
         this.isPlaceable = isPlaceable;
+        this.numUses = numUses;
         String name = Colors.conv(displayName);
         this.uncoloredName = Colors.strip(name);
 
@@ -59,7 +62,23 @@ public class CustomItemStack {
         meta.setDisplayName(Colors.conv(displayName));
         meta.setLore(Colors.conv(lore));
         meta.getPersistentDataContainer().set(CustomItems.getInstance().getItemManager().getIdKey(), PersistentDataType.STRING, id);
+        if (isUsesItem()) meta.getPersistentDataContainer().set(CustomItems.getInstance().getItemManager().getIdKey(), PersistentDataType.INTEGER, numUses);
         item.setItemMeta(meta);
+
+        if (isUsesItem()) {
+            usesItem = item.clone();
+            meta = usesItem.getItemMeta();
+            assert meta != null;
+            ArrayList<String> usesLore = new ArrayList<>();
+            for (String str : Objects.requireNonNull(meta.getLore())) {
+                usesLore.add(str.replace("{uses}", "" + numUses));
+            }
+            meta.setLore(usesLore);
+            usesItem.setItemMeta(meta);
+        }
+        else {
+            usesItem = null;
+        }
 
         itemListItem = item.clone();
         meta = itemListItem.getItemMeta();
@@ -70,6 +89,11 @@ public class CustomItemStack {
         meta.setLore(itemListLore);
         itemListItem.setItemMeta(meta);
     }
+
+    public boolean isUsesItem() {
+        return numUses >= 1;
+    }
+
 
     public String getId() {
         return id;
@@ -84,7 +108,12 @@ public class CustomItemStack {
     }
 
     public ItemStack getItem() {
+        if (isUsesItem()) return usesItem;
         return item;
+    }
+
+    public List<String> getNonUsesLore() {
+        return Objects.requireNonNull(item.getItemMeta()).getLore();
     }
 
     public ItemStack getItemListItem() {
