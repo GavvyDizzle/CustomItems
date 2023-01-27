@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -25,7 +26,7 @@ public class ItemManager implements Listener {
     private ArrayList<CustomItemStack> sortedCustomItemStacks;
     private ArrayList<String> sortedCustomItemStackIDs;
 
-    private boolean isStoppingCustomItemCrafting, dropExtraItems;
+    private boolean stopCustomItemCrafting, stopCustomItemConsumption, dropExtraItems;
     private String stopPlacementMessage;
 
     public ItemManager() {
@@ -42,11 +43,13 @@ public class ItemManager implements Listener {
         config.options().copyDefaults(true);
         config.addDefault("stopPlacementMessage", "&cYou cannot place this");
         config.addDefault("stopCustomItemCrafting", true);
+        config.addDefault("stopCustomItemConsumption", true);
         config.addDefault("dropExtraItems", false);
         CustomItems.getInstance().saveConfig();
 
         stopPlacementMessage = Colors.conv(config.getString("stopPlacementMessage"));
-        isStoppingCustomItemCrafting = config.getBoolean("stopCustomItemCrafting");
+        stopCustomItemCrafting = config.getBoolean("stopCustomItemCrafting");
+        stopCustomItemConsumption = config.getBoolean("stopCustomItemConsumption");
         dropExtraItems = config.getBoolean("dropExtraItems");
 
         reloadAllItems();
@@ -138,7 +141,7 @@ public class ItemManager implements Listener {
 
     @EventHandler
     private void onCustomItemCraft(PrepareItemCraftEvent e) {
-        if (!isStoppingCustomItemCrafting) return;
+        if (!stopCustomItemCrafting) return;
 
         CraftingInventory inv = e.getInventory();
         for (ItemStack item : inv.getStorageContents()) {
@@ -146,6 +149,15 @@ public class ItemManager implements Listener {
                 inv.setResult(null);
                 return;
             }
+        }
+    }
+
+    @EventHandler
+    private void onCustomItemConsume(PlayerItemConsumeEvent e) {
+        if (!stopCustomItemConsumption) return;
+
+        if (isCustomItem(e.getItem())) {
+            e.setCancelled(true);
         }
     }
 
