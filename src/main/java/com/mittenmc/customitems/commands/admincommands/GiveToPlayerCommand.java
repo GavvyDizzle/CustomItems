@@ -2,7 +2,6 @@ package com.mittenmc.customitems.commands.admincommands;
 
 import com.github.mittenmc.serverutils.Numbers;
 import com.github.mittenmc.serverutils.SubCommand;
-import com.mittenmc.customitems.CustomItems;
 import com.mittenmc.customitems.items.CustomItemStack;
 import com.mittenmc.customitems.items.ItemManager;
 import org.bukkit.Bukkit;
@@ -13,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -20,8 +20,8 @@ public class GiveToPlayerCommand extends SubCommand {
 
     private final ItemManager itemManager;
 
-    public GiveToPlayerCommand() {
-        this.itemManager = CustomItems.getInstance().getItemManager();
+    public GiveToPlayerCommand(ItemManager itemManager) {
+        this.itemManager = itemManager;
     }
 
     @Override
@@ -57,7 +57,7 @@ public class GiveToPlayerCommand extends SubCommand {
             return;
         }
 
-        CustomItemStack customItemStack = CustomItems.getInstance().getItemManager().getCustomItem(args[2]);
+        CustomItemStack customItemStack = itemManager.getCustomItem(args[2]);
         if (customItemStack == null) {
             sender.sendMessage(ChatColor.RED + "No item exists with the id: " + args[2]);
             return;
@@ -106,10 +106,10 @@ public class GiveToPlayerCommand extends SubCommand {
         }
         else if (args.length == 3) {
             ArrayList<String> list = new ArrayList<>();
-            StringUtil.copyPartialMatches(args[2], CustomItems.getInstance().getItemManager().getSortedCustomItemStackIDs(), list);
+            StringUtil.copyPartialMatches(args[2], itemManager.getSortedCustomItemStackIDs(), list);
             return list;
         }
 
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 }

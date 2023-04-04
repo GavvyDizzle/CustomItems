@@ -1,15 +1,21 @@
 package com.mittenmc.customitems.commands.admincommands;
 
 import com.github.mittenmc.serverutils.SubCommand;
-import com.mittenmc.customitems.CustomItems;
+import com.mittenmc.customitems.gui.GUIManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class OpenItemListCommand extends SubCommand {
+
+    private final GUIManager guiManager;
+
+    public OpenItemListCommand(GUIManager guiManager) {
+        this.guiManager = guiManager;
+    }
 
     @Override
     public String getName() {
@@ -34,12 +40,12 @@ public class OpenItemListCommand extends SubCommand {
     @Override
     public void perform(CommandSender sender, String[] args) {
         if (sender instanceof Player) {
-            CustomItems.getInstance().getGUIManager().openItemListInventory((Player) sender);
+            guiManager.openItemListInventory((Player) sender);
         }
     }
 
     @Override
     public List<String> getSubcommandArguments(Player player, String[] args) {
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 }

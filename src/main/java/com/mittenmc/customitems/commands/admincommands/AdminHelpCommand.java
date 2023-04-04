@@ -1,15 +1,22 @@
 package com.mittenmc.customitems.commands.admincommands;
 
 import com.github.mittenmc.serverutils.SubCommand;
-import com.mittenmc.customitems.CustomItems;
+import com.mittenmc.customitems.commands.AdminCommandManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class AdminHelpCommand extends SubCommand {
+
+    private final AdminCommandManager adminCommandManager;
+
+    public AdminHelpCommand(AdminCommandManager adminCommandManager) {
+        this.adminCommandManager = adminCommandManager;
+    }
 
     @Override
     public String getName() {
@@ -34,7 +41,7 @@ public class AdminHelpCommand extends SubCommand {
     @Override
     public void perform(CommandSender sender, String[] args) {
         sender.sendMessage(ChatColor.GOLD +  "-----(CustomItems Admin Commands)-----");
-        ArrayList<SubCommand> subCommands = CustomItems.getInstance().getAdminCommandManager().getSubcommands();
+        ArrayList<SubCommand> subCommands = adminCommandManager.getSubcommands();
         for (SubCommand subCommand : subCommands) {
             sender.sendMessage(ChatColor.GOLD + subCommand.getSyntax() + " - " + ChatColor.YELLOW + subCommand.getDescription());
         }
@@ -43,7 +50,7 @@ public class AdminHelpCommand extends SubCommand {
 
     @Override
     public List<String> getSubcommandArguments(Player player, String[] args) {
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 
 }
