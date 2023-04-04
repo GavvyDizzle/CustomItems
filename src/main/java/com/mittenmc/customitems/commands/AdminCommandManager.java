@@ -3,6 +3,8 @@ package com.mittenmc.customitems.commands;
 import com.github.mittenmc.serverutils.SubCommand;
 import com.mittenmc.customitems.CustomItems;
 import com.mittenmc.customitems.commands.admincommands.*;
+import com.mittenmc.customitems.gui.GUIManager;
+import com.mittenmc.customitems.items.ItemManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -12,6 +14,7 @@ import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class AdminCommandManager implements TabExecutor {
@@ -19,18 +22,19 @@ public class AdminCommandManager implements TabExecutor {
     private final ArrayList<SubCommand> subcommands = new ArrayList<>();
     private final ArrayList<String> subcommandStrings = new ArrayList<>();
 
-    public AdminCommandManager() {
+    public AdminCommandManager(CustomItems instance, ItemManager itemManager, GUIManager guiManager) {
         if (CustomItems.getInstance().isRewardsInventoryLoaded()) {
-            subcommands.add(new AddToMiscRewardsCommand());
+            subcommands.add(new AddToRewardsMenuCommand(instance, itemManager));
         }
-        subcommands.add(new AdminHelpCommand());
-        subcommands.add(new GiveToPlayerCommand());
-        subcommands.add(new OpenItemListCommand());
-        subcommands.add(new ReloadCommand());
+        subcommands.add(new AdminHelpCommand(this));
+        subcommands.add(new GiveToPlayerCommand(itemManager));
+        subcommands.add(new OpenItemListCommand(guiManager));
+        subcommands.add(new ReloadCommand(instance, itemManager));
 
         for (SubCommand subCommand : subcommands) {
             subcommandStrings.add(subCommand.getName());
         }
+        Collections.sort(subcommands);
     }
 
     @Override

@@ -73,7 +73,7 @@ public class CustomItemStack {
             assert meta != null;
             ArrayList<String> usesLore = new ArrayList<>();
             for (String str : Objects.requireNonNull(meta.getLore())) {
-                usesLore.add(str.replace("{uses}", "" + numUses));
+                usesLore.add(str.replace("{uses}", String.valueOf(numUses)));
             }
             meta.setLore(usesLore);
             usesItem.setItemMeta(meta);
@@ -97,7 +97,7 @@ public class CustomItemStack {
             assert meta != null;
             ArrayList<String> usesLore = new ArrayList<>();
             for (String str : Objects.requireNonNull(meta.getLore())) {
-                usesLore.add(str.replace("{uses}", "" + numUses));
+                usesLore.add(str.replace("{uses}", String.valueOf(numUses)));
             }
             meta.setLore(usesLore);
             itemListUsesItem.setItemMeta(meta);

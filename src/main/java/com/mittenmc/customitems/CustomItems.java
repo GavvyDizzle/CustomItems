@@ -12,12 +12,12 @@ public final class CustomItems extends JavaPlugin {
     private static CustomItems instance;
     private ItemManager itemManager;
     private GUIManager guiManager;
-    private AdminCommandManager adminCommandManager;
     private boolean isRewardsInventoryLoaded;
 
     @Override
     public void onEnable() {
         instance = this;
+        isRewardsInventoryLoaded = getServer().getPluginManager().getPlugin("RewardsInventory") != null;
 
         itemManager = new ItemManager(); // Must create this before the AdminCommandManager
         getServer().getPluginManager().registerEvents(itemManager, this);
@@ -25,14 +25,11 @@ public final class CustomItems extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(guiManager, this);
 
-        adminCommandManager = new AdminCommandManager();
-        getCommand("customItems").setExecutor(adminCommandManager);
+        getCommand("customItems").setExecutor(new AdminCommandManager(this, itemManager, guiManager));
 
         getConfig().options().copyDefaults(true);
         getConfig().addDefault("items", new HashMap<>());
         saveConfig();
-
-        isRewardsInventoryLoaded = getServer().getPluginManager().getPlugin("RewardsInventory") != null;
     }
 
     public static CustomItems getInstance() {
@@ -45,10 +42,6 @@ public final class CustomItems extends JavaPlugin {
 
     public GUIManager getGUIManager() {
         return guiManager;
-    }
-
-    public AdminCommandManager getAdminCommandManager() {
-        return adminCommandManager;
     }
 
     public boolean isRewardsInventoryLoaded() {

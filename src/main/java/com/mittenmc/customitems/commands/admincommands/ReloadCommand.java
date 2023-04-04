@@ -2,14 +2,23 @@ package com.mittenmc.customitems.commands.admincommands;
 
 import com.github.mittenmc.serverutils.SubCommand;
 import com.mittenmc.customitems.CustomItems;
+import com.mittenmc.customitems.items.ItemManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ReloadCommand extends SubCommand {
+
+    private final CustomItems instance;
+    private final ItemManager itemManager;
+
+    public ReloadCommand(CustomItems instance, ItemManager itemManager) {
+        this.instance = instance;
+        this.itemManager = itemManager;
+    }
 
     @Override
     public String getName() {
@@ -34,8 +43,8 @@ public class ReloadCommand extends SubCommand {
     @Override
     public void perform(CommandSender sender, String[] args) {
         try {
-            CustomItems.getInstance().reloadConfig();
-            CustomItems.getInstance().getItemManager().reload();
+            instance.reloadConfig();
+            itemManager.reload();
         } catch (Exception e) {
             sender.sendMessage(ChatColor.RED + "[CustomItems] Encountered an error when reloading. Check the console");
             e.printStackTrace();
@@ -47,6 +56,6 @@ public class ReloadCommand extends SubCommand {
 
     @Override
     public List<String> getSubcommandArguments(Player player, String[] args) {
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 }
