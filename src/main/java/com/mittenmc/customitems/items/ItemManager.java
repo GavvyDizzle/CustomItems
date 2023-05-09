@@ -66,7 +66,7 @@ public class ItemManager implements Listener {
             Bukkit.getScheduler().runTaskAsynchronously(CustomItems.getInstance(), () -> {
                 parseFolderForFiles(CustomItems.getInstance().getDataFolder());
                 sortedCustomItemStacks = new ArrayList<>(customItemStacks.values());
-                sortedCustomItemStacks.sort(new ItemSorter());
+                Collections.sort(sortedCustomItemStacks);
 
                 sortedCustomItemStackIDs = new ArrayList<>(sortedCustomItemStacks.size());
                 for (CustomItemStack customItemStack : sortedCustomItemStacks) {
@@ -109,6 +109,7 @@ public class ItemManager implements Listener {
                                     key.toLowerCase(),
                                     config.getBoolean(path + ".allowPlacement"),
                                     config.getInt(path + ".uses"),
+                                    config.getInt(path + ".customModelID"),
                                     config.getString(path + ".displayName"),
                                     config.getString(path + ".material"),
                                     config.getStringList(path + ".lore"),

@@ -13,13 +13,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-public class CustomItemStack {
+public class CustomItemStack implements Comparable<CustomItemStack> {
 
     private final String id, uncoloredName;
     private final boolean isPlaceable;
@@ -28,6 +29,7 @@ public class CustomItemStack {
 
     public CustomItemStack(String id,
                            boolean isPlaceable,
+                           int customModelID,
                            int numUses,
                            String displayName,
                            String material,
@@ -61,6 +63,7 @@ public class CustomItemStack {
         }
 
         ItemMeta meta = item.getItemMeta();
+        if (customModelID > 0) meta.setCustomModelData(customModelID);
         meta.setDisplayName(Colors.conv(displayName));
         meta.setLore(Colors.conv(lore));
         meta.getPersistentDataContainer().set(CustomItems.getInstance().getItemManager().getIdKey(), PersistentDataType.STRING, id);
@@ -88,6 +91,7 @@ public class CustomItemStack {
         ArrayList<String> itemListLore = new ArrayList<>(Objects.requireNonNull(meta.getLore()));
         itemListLore.add(ChatColor.DARK_GRAY + "----------------------");
         itemListLore.add(ChatColor.YELLOW + "id: " + ChatColor.GREEN + id);
+        itemListLore.add(ChatColor.YELLOW + "custom_model_data: " + ChatColor.GREEN + customModelID);
         meta.setLore(itemListLore);
         itemListItem.setItemMeta(meta);
 
@@ -120,10 +124,6 @@ public class CustomItemStack {
         return isPlaceable;
     }
 
-    public String getUncoloredName() {
-        return uncoloredName;
-    }
-
     public ItemStack getItem() {
         // Add a unique tag to any "uses" item, so they cannot stack
         if (isUsesItem()) {
@@ -144,5 +144,10 @@ public class CustomItemStack {
     public ItemStack getItemListItem() {
         if (isUsesItem()) return itemListUsesItem;
         return itemListItem;
+    }
+
+    @Override
+    public int compareTo(@NotNull CustomItemStack customItemStack) {
+        return this.uncoloredName.compareTo(customItemStack.uncoloredName);
     }
 }
