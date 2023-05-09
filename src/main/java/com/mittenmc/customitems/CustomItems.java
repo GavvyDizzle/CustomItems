@@ -19,7 +19,7 @@ public final class CustomItems extends JavaPlugin {
         instance = this;
         isRewardsInventoryLoaded = getServer().getPluginManager().getPlugin("RewardsInventory") != null;
 
-        itemManager = new ItemManager(); // Must create this before the AdminCommandManager
+        itemManager = new ItemManager(this); // Must create this before the AdminCommandManager
         getServer().getPluginManager().registerEvents(itemManager, this);
         guiManager = new GUIManager();
 

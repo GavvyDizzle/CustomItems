@@ -21,6 +21,7 @@ import java.util.*;
 
 public class ItemManager implements Listener {
 
+    private final CustomItems instance;
     private final NamespacedKey idKey, usagesKey, randKey;
     private final Map<String, CustomItemStack> customItemStacks;
     private ArrayList<CustomItemStack> sortedCustomItemStacks;
@@ -29,7 +30,9 @@ public class ItemManager implements Listener {
     private boolean stopCustomItemCrafting, stopCustomItemConsumption, dropExtraItems;
     private String stopPlacementMessage;
 
-    public ItemManager() {
+    public ItemManager(CustomItems instance) {
+        this.instance = instance;
+
         idKey = new NamespacedKey(CustomItems.getInstance(), "custom_item_id");
         usagesKey = new NamespacedKey(CustomItems.getInstance(), "uses_remaining");
         randKey = new NamespacedKey(CustomItems.getInstance(), "rand");
@@ -77,8 +80,8 @@ public class ItemManager implements Listener {
             });
         }
         catch (Exception e) {
-            Bukkit.getLogger().severe("Failed to load Custom Items");
-            Bukkit.getLogger().severe(e.getMessage());
+            instance.getLogger().severe("Failed to load Custom Items");
+            instance.getLogger().severe(e.getMessage());
         }
     }
 
@@ -92,7 +95,7 @@ public class ItemManager implements Listener {
                 final FileConfiguration config = YamlConfiguration.loadConfiguration(fileEntry);
 
                 if (config.getConfigurationSection("items") == null) {
-                    Bukkit.getLogger().warning("The file " + fileEntry.getName() + " is empty");
+                    instance.getLogger().warning("The file " + fileEntry.getName() + " is empty");
                 }
                 else {
                     for (String key : config.getConfigurationSection("items").getKeys(false)) {
@@ -100,7 +103,7 @@ public class ItemManager implements Listener {
 
                         String id = key.toLowerCase();
                         if (customItemStacks.containsKey(id)) {
-                            Bukkit.getLogger().warning("You have defined '" + key + "' multiple times. This occurrence is in " + fileEntry.getName());
+                            instance.getLogger().warning("You have defined '" + key + "' multiple times. This occurrence is in " + fileEntry.getName());
                             continue;
                         }
 
@@ -109,7 +112,7 @@ public class ItemManager implements Listener {
                                     key.toLowerCase(),
                                     config.getBoolean(path + ".allowPlacement"),
                                     config.getInt(path + ".uses"),
-                                    config.getInt(path + ".customModelID"),
+                                    config.getInt(path + ".customModelData"),
                                     config.getString(path + ".displayName"),
                                     config.getString(path + ".material"),
                                     config.getStringList(path + ".lore"),
@@ -119,7 +122,7 @@ public class ItemManager implements Listener {
                             ));
                         }
                         catch (Exception e) {
-                            Bukkit.getLogger().warning("Failed to add item " + key + " from file " + fileEntry.getName());
+                            instance.getLogger().warning("Failed to add item " + key + " from file " + fileEntry.getName());
                             e.printStackTrace();
                         }
                     }
