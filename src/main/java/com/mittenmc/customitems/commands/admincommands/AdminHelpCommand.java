@@ -4,7 +4,6 @@ import com.github.mittenmc.serverutils.SubCommand;
 import com.mittenmc.customitems.commands.AdminCommandManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,7 +48,7 @@ public class AdminHelpCommand extends SubCommand {
     }
 
     @Override
-    public List<String> getSubcommandArguments(Player player, String[] args) {
+    public List<String> getSubcommandArguments(CommandSender sender, String[] args) {
         return Collections.emptyList();
     }
 

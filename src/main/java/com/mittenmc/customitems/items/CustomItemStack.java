@@ -91,7 +91,7 @@ public class CustomItemStack implements Comparable<CustomItemStack> {
         ArrayList<String> itemListLore = new ArrayList<>(Objects.requireNonNull(meta.getLore()));
         itemListLore.add(ChatColor.DARK_GRAY + "----------------------");
         itemListLore.add(ChatColor.YELLOW + "id: " + ChatColor.GREEN + id);
-        itemListLore.add(ChatColor.YELLOW + "custom_model_data: " + ChatColor.GREEN + customModelID);
+        if (customModelID > 0) itemListLore.add(ChatColor.YELLOW + "custom_model_data: " + ChatColor.GREEN + customModelID);
         meta.setLore(itemListLore);
         itemListItem.setItemMeta(meta);
 

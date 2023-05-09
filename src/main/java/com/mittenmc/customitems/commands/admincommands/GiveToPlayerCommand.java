@@ -100,7 +100,7 @@ public class GiveToPlayerCommand extends SubCommand {
     }
 
     @Override
-    public List<String> getSubcommandArguments(Player player, String[] args) {
+    public List<String> getSubcommandArguments(CommandSender sender, String[] args) {
         if (args.length == 2) {
             return null;
         }

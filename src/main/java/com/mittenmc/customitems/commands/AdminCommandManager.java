@@ -75,7 +75,7 @@ public class AdminCommandManager implements TabExecutor {
         else if (args.length >= 2) {
             for (SubCommand subcommand : subcommands) {
                 if (args[0].equalsIgnoreCase(subcommand.getName())) {
-                    return subcommand.getSubcommandArguments((Player) sender, args);
+                    return subcommand.getSubcommandArguments(sender, args);
                 }
             }
         }

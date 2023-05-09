@@ -5,7 +5,6 @@ import com.mittenmc.customitems.CustomItems;
 import com.mittenmc.customitems.items.ItemManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.Collections;
 import java.util.List;
@@ -55,7 +54,7 @@ public class ReloadCommand extends SubCommand {
     }
 
     @Override
-    public List<String> getSubcommandArguments(Player player, String[] args) {
+    public List<String> getSubcommandArguments(CommandSender sender, String[] args) {
         return Collections.emptyList();
     }
 }

@@ -111,8 +111,8 @@ public class ItemManager implements Listener {
                             customItemStacks.put(key.toLowerCase(), new CustomItemStack(
                                     key.toLowerCase(),
                                     config.getBoolean(path + ".allowPlacement"),
-                                    config.getInt(path + ".uses"),
                                     config.getInt(path + ".customModelData"),
+                                    config.getInt(path + ".uses"),
                                     config.getString(path + ".displayName"),
                                     config.getString(path + ".material"),
                                     config.getStringList(path + ".lore"),
